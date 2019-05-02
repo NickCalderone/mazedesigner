@@ -2,23 +2,123 @@
     text-align: center;
 }
 
-.wrapper {
-    width: 40px;
-    height: 40px;
+.grid {
+    width: 800px;
+    font-size: 0px;
 }
 
 .top {
-    border-top: solid 6px;
+    background-color: black;
+    grid-area: top;
+    padding: 0px;
+    margin: 0px;
 }
 
 .right {
-    border-right: solid 6px;
+    background-color: black;
+    grid-area: right;
+    padding: 0px;
+    margin: 0px;
 }
 
 .bottom {
-    border-bottom: solid 6px;
+    background-color: black;
+    grid-area: bottom;
+    padding: 0px;
+    margin: 0px;
 }
 
 .left {
-    border-left: solid 6px;
+    grid-area: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+.wrapper-outer {
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+}
+
+.true {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border: none;
+}
+
+.fill1 {
+    grid-area: fill1;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border: none;
+}
+
+.fill2 {
+    grid-area: fill2;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border: none;
+}
+
+.fill3 {
+    grid-area: fill3;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border: none;
+}
+
+.fill4 {
+    grid-area: fill4;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border: none;
+}
+
+.false {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0, 117, 117);
+    border: none;
+}
+
+.wrapper-inner {
+    display: grid;
+    grid-template-areas:
+        "fill1 top top top top top top top top top fill2"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "left . . . . . . . . . right"
+        "fill3 bottom bottom bottom bottom bottom bottom bottom bottom bottom fill4";
+    grid-auto-columns: 1fr;
+    grid-auto-rows: 1fr;
+    width: 80px;
+    height: 80px;
+    background-color: teal;
+}
+
+.player {
+    background-color: rgb(0, 42, 134);
 }
