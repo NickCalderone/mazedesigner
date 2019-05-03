@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { objectTypeAnnotation, jsxOpeningElement } from "@babel/types";
 
 class App extends React.Component {
     constructor(props) {
@@ -10,10 +11,16 @@ class App extends React.Component {
         this.arrayClone = this.arrayClone.bind(this);
         this.wallClickHandler = this.wallClickHandler.bind(this);
         this.move = this.move.bind(this);
+        this.updateSavedBoards = this.updateSavedBoards.bind(this);
+        this.saveBoard = this.saveBoard.bind(this);
+        this.winCheck = this.winCheck.bind(this);
+        this.prevDefault = this.prevDefault.bind(this);
 
         this.state = {
             iPos: 0,
             jPos: 0,
+            savedBoards: Object.keys(localStorage),
+            current: "Give Your Board A Name",
             // prettier-ignore
             board: [
                 //       1             2             3             4             5             6             7             8             9            10
@@ -51,6 +58,57 @@ class App extends React.Component {
         };
     }
 
+    listSavedBoards(props) {
+        let savedBoardsArray = [];
+        for (let i = 0; i < this.state.savedBoards.length; i++) {
+            savedBoardsArray.push(
+                <div>
+                    <p>{this.state.savedBoards[i]}</p>
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem(this.state.savedBoards[i]);
+                            this.updateSavedBoards();
+                        }}
+                    >
+                        Delete
+                    </button>
+                    <button
+                        onClick={() => {
+                            this.setState({
+                                board: JSON.parse(
+                                    localStorage.getItem(
+                                        this.state.savedBoards[i]
+                                    )
+                                )
+                            });
+                        }}
+                    >
+                        Load
+                    </button>
+                </div>
+            );
+        }
+        return savedBoardsArray;
+    }
+
+    updateSavedBoards() {
+        this.setState({
+            savedBoards: Object.keys(localStorage)
+        });
+    }
+
+    saveBoard() {
+        let x = JSON.stringify(this.state.board);
+        localStorage.setItem(this.state.current, x);
+        this.updateSavedBoards();
+    }
+
+    useBoard() {
+        this.setState({
+            board: JSON.parse(localStorage.getItem("testing"))
+        });
+    }
+
     buildBoard(props) {
         let rowsArray = [];
 
@@ -63,6 +121,9 @@ class App extends React.Component {
                 let squareId = i + "_" + j;
                 if (this.state.iPos === i && this.state.jPos === j) {
                     player = "player";
+                }
+                if (i === 9 && j === 9) {
+                    player = "goal";
                 }
 
                 rowsArray.push(
@@ -82,7 +143,21 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        document.addEventListener("keydown", this.prevDefault);
         document.addEventListener("keydown", this.move);
+    }
+
+    prevDefault(e) {
+        if (
+            e.keyCode === 37 ||
+            e.keyCode === 38 ||
+            e.keyCode === 39 ||
+            e.keyCode === 40
+        ) {
+            e.preventDefault();
+        } else {
+            return false;
+        }
     }
 
     arrayClone(array) {
@@ -90,6 +165,15 @@ class App extends React.Component {
         return clone;
 
         // return JSON.parse(JSON.stringify(array));
+    }
+    winCheck() {
+        if (this.state.iPos === 9 && this.state.jPos === 9) {
+            alert("You Win!");
+            this.setState({
+                iPos: 0,
+                jPos: 0
+            });
+        } else return;
     }
 
     wallClickHandler(i, j, k) {
@@ -144,11 +228,14 @@ class App extends React.Component {
                     this.state.board[this.state.iPos][this.state.jPos][0] ===
                     false
                 ) {
-                    this.setState(previousState => {
-                        return {
-                            iPos: previousState.iPos - 1
-                        };
-                    });
+                    this.setState(
+                        previousState => {
+                            return {
+                                iPos: previousState.iPos - 1
+                            };
+                        },
+                        () => this.winCheck()
+                    );
                 }
 
                 break;
@@ -157,11 +244,14 @@ class App extends React.Component {
                     this.state.board[this.state.iPos][this.state.jPos][1] ===
                     false
                 ) {
-                    this.setState(previousState => {
-                        return {
-                            jPos: previousState.jPos + 1
-                        };
-                    });
+                    this.setState(
+                        previousState => {
+                            return {
+                                jPos: previousState.jPos + 1
+                            };
+                        },
+                        () => this.winCheck()
+                    );
                 }
                 break;
             case 40: //down
@@ -169,11 +259,14 @@ class App extends React.Component {
                     this.state.board[this.state.iPos][this.state.jPos][2] ===
                     false
                 ) {
-                    this.setState(previousState => {
-                        return {
-                            iPos: previousState.iPos + 1
-                        };
-                    });
+                    this.setState(
+                        previousState => {
+                            return {
+                                iPos: previousState.iPos + 1
+                            };
+                        },
+                        () => this.winCheck()
+                    );
                 }
                 break;
             case 37: //left
@@ -181,11 +274,14 @@ class App extends React.Component {
                     this.state.board[this.state.iPos][this.state.jPos][3] ===
                     false
                 ) {
-                    this.setState(previousState => {
-                        return {
-                            jPos: previousState.jPos - 1
-                        };
-                    });
+                    this.setState(
+                        previousState => {
+                            return {
+                                jPos: previousState.jPos - 1
+                            };
+                        },
+                        () => this.winCheck()
+                    );
                 }
                 break;
             default:
@@ -194,7 +290,19 @@ class App extends React.Component {
     }
 
     render() {
-        return <div>{this.buildBoard()}</div>;
+        return (
+            <div>
+                <div>{this.buildBoard()}</div>
+                <textarea
+                    onChange={e => this.setState({ current: e.target.value })}
+                    value={this.state.current}
+                />
+                <button type="submit" id="save" onClick={this.saveBoard}>
+                    hey
+                </button>
+                <div>{this.listSavedBoards()}</div>
+            </div>
+        );
     }
 }
 
@@ -202,10 +310,10 @@ function Square(props) {
     let bClass = "";
     let wallClass = "";
     let buttonsArray = [
-        <div class="fill1" />,
-        <div class="fill2" />,
-        <div class="fill3" />,
-        <div class="fill4" />
+        <div className="fill1" />,
+        <div className="fill2" />,
+        <div className="fill3" />,
+        <div className="fill4" />
     ];
     for (let k = 0; k < 4; k++) {
         switch (k) {
