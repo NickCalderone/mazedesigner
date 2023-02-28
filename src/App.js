@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-import { objectTypeAnnotation, jsxOpeningElement } from "@babel/types";
 
 class App extends React.Component {
     constructor(props) {
