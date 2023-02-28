@@ -296,7 +296,7 @@ class App extends React.Component {
                     value={this.state.current}
                 />
                 <button type="submit" id="save" onClick={this.saveBoard}>
-                    hey
+                    Save Maze
                 </button>
                 <div>{this.listSavedBoards()}</div>
             </div>
